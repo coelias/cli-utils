@@ -1,0 +1,18 @@
+function hh() {
+	history | grep "$1" | grep "$2" | grep "$3" | grep "$4" | grep "$5"
+}
+
+function ff() {
+	find . | grep "$1" | grep "$2" | grep "$3" | grep "$4" | grep "$5"
+}
+
+function pp() {
+	ps aux | grep "$1" | grep "$2" | grep "$3" | grep "$4" | grep "$5"
+}
+
+function kk() {
+	while read line
+    do
+      kill -9 `echo "$line" | egrep -o "^\S+\s+[0-9]+" | egrep -o "[0-9]+$"`
+    done < "${1:-/dev/stdin}"
+}

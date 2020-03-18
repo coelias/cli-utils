@@ -1,0 +1,13 @@
+cat << EOF | xmodmap -
+keycode  51 = backslash bar
+keycode  49 = grave asciitilde
+keycode  48 = apostrophe quotedbl
+keycode  11 = 2 at 2 at EuroSign
+keycode  12 = 3 sterling 3 sterling numbersign
+keycode  113 = Left	Home Left Home
+keycode  114 = Right End Right End
+keycode  111 = Up Prior Up Prior 
+keycode  116 = Down Next Down Next 
+EOF
+xinput --set-prop "Apple Inc. Magic Trackpad 2" "libinput Tapping Enabled" 0
+xinput --set-prop "Apple Inc. Magic Trackpad 2" "libinput Natural Scrolling Enabled" 0

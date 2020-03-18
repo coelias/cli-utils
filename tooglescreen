@@ -1,0 +1,42 @@
+#!/usr/bin/zsh
+
+xrandr --auto
+
+sleep 4
+
+SETUP=`xrandr`
+
+
+EXTERNALSCREEN=`echo $SETUP | egrep "^DP-[0-9-]+ connected" | cut -f 1 -d' ' | cut -f 2- -d'-'`
+HOMESCREEN=`echo $SETUP | egrep -o 'DP-'$EXTERNALSCREEN' connected.*3440x1440'`
+WORKSCREEN=`echo $SETUP | egrep -o 'DP-'$EXTERNALSCREEN' connected.*3840x2160'`
+LAPTOPON=`echo $SETUP | egrep -o 'eDP-1 connected( primary)? [0-9]+x[0-9]+\+[0-9]+\+[0-9]+'`
+
+echo $SETUP
+echo $EXTERNALSCREEN
+echo $HOMESCREEN
+echo $WORKSCREEN
+
+if [ -n "$HOMESCREEN" ] ; then
+	echo 111
+	if [ -n "$LAPTOPON" ] ; then 
+		xrandr --output eDP-1 --off; xrandr --output DP-$EXTERNALSCREEN --primary --pos 0x0;
+    else 
+		xrandr --output eDP-1 --auto --below DP-$EXTERNALSCREEN --scale 0.5x0.5 
+		xrandr --output eDP-1 --pos 952x1440;
+	fi
+elif [ -n "$WORKSCREEN" ] ; then
+    echo CCC
+	if [ -n "$LAPTOPON" ] ; then 
+		echo AAA
+		xrandr --output eDP-1 --off; xrandr --output DP-$EXTERNALSCREEN --primary --pos 0x0;
+    else 
+		echo BBB
+		xrandr --output eDP-1 --auto --below DP-$EXTERNALSCREEN --scale 0.5x0.5 
+		xrandr --output eDP-1 --pos 920x2160;
+	fi
+else
+	echo 222
+	xrandr --output eDP-1 --auto --scale 0.5x0.5
+	xrandr --output eDP-1 --pos 0x0;
+fi

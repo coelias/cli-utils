@@ -1,0 +1,1 @@
+pactl list sink-inputs | egrep -o "Sink Input #[0-9]+" | sed -r 's/.*#([0-9]+)$/\1/g' | xargs -i pactl set-sink-input-volume {} -10%

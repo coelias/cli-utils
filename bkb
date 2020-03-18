@@ -1,0 +1,44 @@
+coproc bluetoothctl
+echo 'Powering On'
+echo 'power on' >&${COPROC[1]}
+sleep 1
+echo 'Removing devices'
+echo 'remove 0C:D7:46:E6:4F:C4' >&${COPROC[1]}
+echo 'remove 8C:85:90:F1:DA:40' >&${COPROC[1]}
+sleep 1
+echo 'Powering Off'
+echo 'power off' >&${COPROC[1]}
+sleep 1
+echo 'Powering On'
+echo 'power on' >&${COPROC[1]}
+sleep 1
+echo 'Scanning On'
+echo 'scan on' >&${COPROC[1]}
+sleep 1
+echo 'Discoverable On'
+echo 'discoverable on' >&${COPROC[1]}
+sleep 1
+echo 'Pairable On'
+echo 'pairable on' >&${COPROC[1]}
+sleep 1
+echo 'Agent Off'
+echo 'agent off' >&${COPROC[1]}
+sleep 5
+echo 'Agent On'
+echo 'agent NoInputNoOutput' >&${COPROC[1]}
+sleep 1
+echo 'Trusting devices'
+echo 'trust 0C:D7:46:E6:4F:C4' >&${COPROC[1]}
+echo 'trust 8C:85:90:F1:DA:40' >&${COPROC[1]}
+sleep 1
+echo 'Pairing devices'
+echo 'pair 0C:D7:46:E6:4F:C4' >&${COPROC[1]}
+echo 'pair 8C:85:90:F1:DA:40' >&${COPROC[1]}
+sleep 10
+echo 'Connecting devices'
+echo 'connect 0C:D7:46:E6:4F:C4' >&${COPROC[1]}
+echo 'connect 8C:85:90:F1:DA:40' >&${COPROC[1]}
+sleep 10
+
+echo "Applying config... DONE!"
+bkb2
