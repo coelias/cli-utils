@@ -1,0 +1,72 @@
+#!/usr/bin/python
+import os
+import sys
+
+def strsize(bytes):
+	metric=["bytes","Kb","Mb","Gb","Tb"]
+	k=0
+	while bytes>1000:
+		k+=1
+		bytes=float(bytes)/1024
+
+	if k: bytes="{0:.2f}".format(bytes)
+
+	return "{0} {1}".format(bytes,metric[k])
+	
+
+def listdir(path,res):
+	if os.path.isfile(path) and not os.path.islink(path):
+		res[path]=os.stat(path).st_size
+	elif os.path.isdir(path):
+		try:
+			cnt=os.listdir(path)
+			for i in cnt:
+				listdir(os.path.join(path,i),res)
+		except: pass
+
+done={}
+
+for i in sys.stdin:
+	listdir(i.strip(),done)
+
+total=sum(done.values())	
+
+print "::::::::::::::::::::::::::::::::::"
+print "Total Files:",len(done)
+print "Total size:",strsize(total)
+print "::::::::::::::::::::::::::::::::::"
+print "extension summary:"
+extensions={}
+for i,j in done.items():
+	extension=os.path.basename(i).split(".")[1:]
+	extension.reverse()
+	tmp=[]
+	for i in extension:
+		if 1<len(i)<=5: tmp.append(i)
+		else: break
+	tmp.reverse()
+
+	if not tmp: i="NOEXTENSION"
+	else: i=".".join(tmp)
+
+	if not i: i="Not extension"
+	extensions.setdefault(i,0)
+	extensions[i]+=j
+
+extensions=sorted(extensions.items(),key=lambda x:x[1])
+accounted=0
+smallfiles=0
+onepercent=total/100
+for i,j in extensions:
+	if accounted+j<onepercent:
+		accounted+=j
+		smallfiles+=1
+	else:
+		print i+":",strsize(j)
+
+print "\n{0} of files (%1 smallest): {1}".format(smallfiles,strsize(accounted))
+
+
+
+
+print "::::::::::::::::::::::::::::::::::"

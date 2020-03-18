@@ -1,0 +1,100 @@
+#!/usr/bin/python
+
+import re
+import sys
+import argparse
+
+parser = argparse.ArgumentParser(description='Multiple regular expression search')
+
+parser.add_argument("-i", dest="input",nargs="+",help="input files (or stdin -)",required=True)
+parser.add_argument("-r", dest="regexps",nargs="+",help="regexp file (or stdin -)",required=True)
+parser.add_argument("-v", dest="reverse",help="Output non matching regexps",action='store_true')
+parser.add_argument("-n", dest="nonre",help="non regexps, just presence",action='store_true')
+
+options = parser.parse_args()
+
+if len(options.regexps)==1 and "-" in options.regexps:
+	if options.nonre: repool=set([i.strip() for i in sys.stdin if i.strip()])
+	else: repool=[re.compile(i.strip()) for i in sys.stdin if i.strip()]
+elif "-" not in options.regexps:
+	repool=[]
+	if options.nonre: repool=set()
+	for j in options.regexps:
+		j=open(j)	
+		for i in j:
+			if options.nonre: repool.add(i.strip())
+			else: repool.append(re.compile(i.strip()))
+		j.close()
+else:
+	print "Wrong parameters"
+	sys.exit(0)
+
+
+
+if len(options.input)==1 and "-" in options.input:
+	if not options.reverse:
+		for line in sys.stdin:
+			if options.nonre:
+				for patt in repool:
+					if patt in line:
+						sys.stdout.write(line)
+						break
+			else:
+				for regex in repool:
+					if regex.findall(line):
+						sys.stdout.write(line)
+						break
+	else:
+		for line in sys.stdin:
+			found=False
+
+			if options.nonre:
+				for patt in repool:
+					if patt in line:
+						found=True
+						break
+			else:
+				for regex in repool:
+					if regex.findall(line):
+						found=True
+						break
+
+			if not found:
+				sys.stdout.write(line)
+
+elif "-" not in options.input:
+	for j in options.input:
+		j=open(j)
+		if not options.reverse:
+			if options.nonre:
+				for line in j:
+					for patt in repool:
+						if patt in line:
+							sys.stdout.write(line)
+							break
+			else:
+				for line in j:
+					for regex in repool:
+						if regex.findall(line):
+							sys.stdout.write(line)
+							break
+		else:
+			if options.nonre:
+				for line in j:
+					found=False
+					for patt in repool:
+						if patt in line:
+							found=True
+							break
+					if not found:
+						sys.stdout.write(line)
+			else:
+				for line in j:
+					found=False
+					for regex in repool:
+						if regex.findall(line):
+							found=True
+							break
+					if not found:
+						sys.stdout.write(line)
+		j.close()
