@@ -3,7 +3,7 @@ function hh() {
 }
 
 function ff() {
-	find . | grep "$1" | grep "$2" | grep "$3" | grep "$4" | grep "$5"
+	find . | grep -i "$1" | grep -i "$2" | grep -i "$3" | grep -i "$4" | grep -i "$5"
 }
 
 function pp() {
