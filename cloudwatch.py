@@ -11,6 +11,7 @@ import json
 import uuid
 import os
 import code
+import configparser
 
 readline.parse_and_bind ("bind ^I rl_complete")
 readline.set_completer_delims(' \t')
@@ -22,10 +23,9 @@ class CloudWatchCLI():
         self.COMPLETERS = {i[10:]:getattr(self,i) for i in dir(self) if i.startswith('COMPLETER_')}
         self.matches=[None]
 
-        self.ENVS=['sandbox','prod','staging']
-
         self.VARS={"env":None, "log_group": None}
         self.last=None
+
 
     def cmdloop(self):
         while True:
@@ -72,10 +72,13 @@ class CloudWatchCLI():
                 print (f'Error: {ex}')
                 
     def COMPLETER_profile(self):
-        return self.ENVS
+        config = configparser.ConfigParser()
+        config.read(f'{os.getenv("HOME")}/.aws/config')
+
+        return [i.replace("profile ","") for i in config.sections()]
 
     def CMD_profile(self, profile):
-        assert profile in self.ENVS, f'Environment "{profile}" is not a valid one'
+        assert profile in self.COMPLETER_profile(), f'Environment "{profile}" is not a valid one'
         self.VARS['env']=profile
         boto3.setup_default_session(profile_name=profile)
         self.client = boto3.client('logs')
