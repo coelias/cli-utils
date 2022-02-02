@@ -176,4 +176,32 @@ class CloudWatchCLI():
 
          return response['results']
 
-CloudWatchCLI().cmdloop()
+if len (sys.argv) == 1:
+    CloudWatchCLI().cmdloop()
+else:
+    cl = CloudWatchCLI()
+
+    rest = sys.argv[1:]
+    cmds = []
+    cmd = ""
+    for i in rest:
+        if re.findall("^-{1,2}",i):
+            if cmd:
+                cmds.append(cmd)
+            cmd=i.strip('-')
+        elif not cmd:
+            print (f"Wrong command! [{i}]")
+            sys.exit(-1)
+        else:
+            cmd += f" {i}"
+    cmds.append(cmd)
+
+    for i in cmds:
+        cmd = i.split()[0]
+        if cmd not in cl.CMDS:
+            print (f"Wrong command! [{cmd}]")
+            sys.exit(-1)
+
+    for i in cmds:
+        cl.process_command(i)
+
