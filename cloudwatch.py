@@ -111,7 +111,7 @@ class CloudWatchCLI():
         start_time=int(parser.parse(start_time,dayfirst=True).timestamp())
         end_time=int(parser.parse(end_time,dayfirst=True).timestamp())
 
-        delta=86400
+        delta=end_time-start_time
 
         results=[]
         while start_time<end_time:
@@ -136,6 +136,11 @@ class CloudWatchCLI():
         from  pprint import pprint as pp
         last=self.last
         code.interact(local=locals(),banner = '\nVariable "last" contains the last fetched data, print it with "pp(last)"\nYou can start typing python\n')
+
+    def CMD_tsv(self):
+        print ('\t'.join(i['field'] for i in self.last[0]))
+        for i in self.last:
+            print ('\t'.join(str(j['value']) for j in i))
 
     def CMD_store(self,*args):
         if not args:
